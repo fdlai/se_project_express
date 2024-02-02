@@ -1,49 +1,53 @@
 const userModel = require("../models/user");
+const { CustomError, handleErrors } = require("../utils/errors");
 
-//get all users
+//get all users using route /users
 const getUsers = (req, res) => {
   userModel
     .find({})
     .then((usersArray) => {
-      res.status(200);
-      res.set("Content-Type", "application/json");
       console.log(usersArray);
-      res.send(usersArray);
+      return res.status(200).json(usersArray);
     })
     .catch((err) => {
-      res.status(500).send(`${err} Failed to retrieve users.`);
+      const message = `${err} Failed to retrieve users.`;
+      handleErrors(err, message, next);
     });
 };
 
-//get a single user by id
-const getUser = (req, res) => {
+//get a single user by id, using route /users/:userId
+const getUser = (req, res, next) => {
   const { userId } = req.params;
 
   userModel
     .findById(userId)
+    .orFail(() => {
+      const error = new CustomError("User ID not found", 404);
+      return next(error);
+    })
     .then((user) => {
-      res.status(200);
-      res.set("Content-Type", "application/json");
       console.log(user);
-      res.send(user);
+      return res.status(200).json(user);
     })
     .catch((err) => {
-      res.status(500).send(`${err} Could not get user.`);
+      const message = `${err} Could not get user.`;
+      handleErrors(err, message, next);
     });
 };
 
-//add a new user
-const createUser = (req, res) => {
+//add a new user using route /users
+const createUser = (req, res, next) => {
   const { name, avatar } = req.body;
 
   userModel
     .create({ name, avatar })
     .then((newUser) => {
       console.log(newUser);
-      res.send(newUser);
+      res.status(200).json(newUser);
     })
     .catch((err) => {
-      res.status(500).send(`${err} Failed to create new user.`);
+      const message = `${err} Failed to create new user.`;
+      handleErrors(err, message, next);
     });
 };
 

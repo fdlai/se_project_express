@@ -2,57 +2,27 @@
 const { Router } = require("express");
 const router = Router();
 const clothingItemModel = require("../models/clothingItem");
+const {
+  getItems,
+  addItem,
+  deleteItem,
+  likeItem,
+  unlikeItem,
+} = require("../controllers/clothingItems");
 
 //get all clothing items
-router.get("/", (req, res) => {
-  clothingItemModel
-    .find({})
-    .populate("owner")
-    .then((items) => {
-      console.log(items);
-      res.status(200).set("Content-Type", "application/json").send(items);
-    })
-    .catch((err) => {
-      const message = `${err} Could not get items.`;
-      console.error(message);
-      res.status(500).send(message);
-    });
-});
+router.get("/", getItems);
 
 //add a new clothing item
-router.post("/", (req, res) => {
-  const { name, weather, imageUrl, owner } = req.body;
-
-  clothingItemModel
-    .create({ name, weather, imageUrl, owner })
-    .then((item) => {
-      res.status(200);
-      res.set("Content-Type", "application/json");
-      console.log(item);
-      res.send(item);
-    })
-    .catch((err) => {
-      const message = `${err} Could not add item.`;
-      console.error(message);
-      res.status(500).send(message);
-    });
-});
+router.post("/", addItem);
 
 //delete an item by its id
-router.delete("/:itemId", (req, res) => {
-  const { itemId } = req.params;
+router.delete("/:itemId", deleteItem);
 
-  clothingItemModel
-    .findByIdAndRemove(itemId)
-    .then((item) => {
-      console.log("Deleted", item);
-      res.status(200).set("Content-Type", "application/json").send(item);
-    })
-    .catch((err) => {
-      const message = `${err} Could not delete item.`;
-      console.error(message);
-      res.status(500).send(message);
-    });
-});
+//like an item by its id
+router.put("/:itemId/likes", likeItem);
+
+//unlike an item by its id
+router.delete("/:itemId/likes", unlikeItem);
 
 module.exports = router;
