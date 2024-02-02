@@ -21,7 +21,7 @@ mongoose.connect(
 const setJohnMcClaneAsUser = (req, res, next) => {
   // John McClane's user id
   req.user = { _id: "65ba14a62e30213b796614f5" };
-  next();
+  return next();
 };
 
 app.use(express.json());
@@ -30,39 +30,15 @@ app.use("/items", setJohnMcClaneAsUser, clothingItemsRouter);
 // runs if no other endpoints are requested
 app.use((req, res, next) => {
   const err = new CustomError(`Requested resource not found.`, 404);
-  next(err);
+  return next(err);
 });
 // global error handler.
-app.use((error, req, res) => {
+app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
   res.status(statusCode).json({ message: error.message });
+  return next();
 });
 
 app.listen(PORT, () => {
   console.log("Server is running!");
 });
-
-// Test user images:
-
-// Darth Vader
-// https://www.wallpapertip.com/wmimgs/249-2495537_darth-vader.jpg
-
-// Aragorn
-// https://cdn.staticneo.com/w/lotr/Aragorn.jpg
-
-// John McClane
-// https://i.pinimg.com/originals/41/41/3b/41413b84d9d7f88d6e95339e8453a376.jpg
-
-// Forrest Gump
-// https://i.imgflip.com/uaysp.jpg
-
-// Test clothing item images:
-
-// Lightsaber
-// https://images-na.ssl-images-amazon.com/images/I/315yq7GPqLL._SL500_AC_SS350_.jpg
-
-// Sword
-// https://www.actionfiguren-shop.com/out/pictures/generated/product/4/540_340_100/andruil_4.jpg
-
-// Green Shirt
-// https://cdnc.lystit.com/photos/riverisland/1b7b5ab2/river-island-green-Dark-Green-Muscle-Fit-Crew-Neck-T-shirt-Dark-Green-Muscle-Fit-Crew-Neck-T-shirt.jpeg

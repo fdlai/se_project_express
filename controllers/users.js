@@ -43,7 +43,7 @@ const createUser = (req, res, next) => {
     .create({ name, avatar })
     .then((newUser) => {
       console.log(newUser);
-      res.status(200).json(newUser);
+      return res.status(200).json(newUser);
     })
     .catch((err) => {
       const message = `${err} Failed to create new user.`;

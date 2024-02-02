@@ -8,7 +8,7 @@ const getItems = (req, res, next) => {
     .populate("owner")
     .then((items) => {
       console.log(items);
-      res.status(200).json(items);
+      return res.status(200).json(items);
     })
     .catch((err) => {
       const message = `${err} Could not get items.`;
@@ -24,7 +24,7 @@ const addItem = (req, res, next) => {
     .create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
       console.log(item);
-      res.status(200).json(item);
+      return res.status(200).json(item);
     })
     .catch((err) => {
       const message = `${err} Could not add item.`;
@@ -44,7 +44,7 @@ const deleteItem = (req, res, next) => {
     })
     .then((item) => {
       console.log(item);
-      res.status(200).json(item);
+      return res.status(200).json(item);
     })
     .catch((err) => {
       const message = `${err} Could not delete item.`;
@@ -68,7 +68,7 @@ const likeItem = (req, res, next) => {
     })
     .then((item) => {
       console.log(item);
-      res.status(200).json(item);
+      return res.status(200).json(item);
     })
     .catch((err) => {
       const message = `${err} Could not like item.`;
@@ -92,7 +92,7 @@ const unlikeItem = (req, res, next) => {
     })
     .then((item) => {
       console.log(item);
-      res.status(200).json(item);
+      return res.status(200).json(item);
     })
     .catch((err) => {
       const message = `${err} Could not unlike item.`;

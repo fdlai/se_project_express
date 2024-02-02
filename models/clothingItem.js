@@ -37,9 +37,6 @@ const clothingItemSchema = new mongoose.Schema({
   },
 });
 
-const clothingItemModel = new mongoose.model(
-  "clothingItem",
-  clothingItemSchema,
-);
+const clothingItemModel = mongoose.model("clothingItem", clothingItemSchema);
 
 module.exports = clothingItemModel;
