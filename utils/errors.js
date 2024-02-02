@@ -8,7 +8,7 @@ class CustomError extends Error {
 
 const handleErrors = (err, message, next) => {
   console.error(message);
-  if (err.name === "ValidationError") {
+  if (err.name === "ValidationError" || err.name === "CastError") {
     const error = new CustomError(err.message, 400);
     return next(error);
   }

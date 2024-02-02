@@ -1,7 +1,7 @@
 const clothingItemModel = require("../models/clothingItem");
 const { CustomError, handleErrors } = require("../utils/errors");
 
-//get all items, using route /items
+// get all items, using route /items
 const getItems = (req, res, next) => {
   clothingItemModel
     .find({})
@@ -16,9 +16,9 @@ const getItems = (req, res, next) => {
     });
 };
 
-//add a new item, using route /items
+// add a new item, using route /items
 const addItem = (req, res, next) => {
-  const { name, weather, imageUrl, owner } = req.body;
+  const { name, weather, imageUrl } = req.body;
 
   clothingItemModel
     .create({ name, weather, imageUrl, owner: req.user._id })
@@ -32,7 +32,7 @@ const addItem = (req, res, next) => {
     });
 };
 
-//delete an item by its id, using route /items/:itemId
+// delete an item by its id, using route /items/:itemId
 const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
 
@@ -52,7 +52,7 @@ const deleteItem = (req, res, next) => {
     });
 };
 
-//like an item by its id, using route /items/:itemId/likes
+// like an item by its id, using route /items/:itemId/likes
 const likeItem = (req, res, next) => {
   const { itemId } = req.params;
 
@@ -76,7 +76,7 @@ const likeItem = (req, res, next) => {
     });
 };
 
-//unlike an item by its id, using route /items/:itemId/likes
+// unlike an item by its id, using route /items/:itemId/likes
 const unlikeItem = (req, res, next) => {
   const { itemId } = req.params;
 

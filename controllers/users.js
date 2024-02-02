@@ -1,8 +1,8 @@
 const userModel = require("../models/user");
 const { CustomError, handleErrors } = require("../utils/errors");
 
-//get all users using route /users
-const getUsers = (req, res) => {
+// get all users using route /users
+const getUsers = (req, res, next) => {
   userModel
     .find({})
     .then((usersArray) => {
@@ -15,7 +15,7 @@ const getUsers = (req, res) => {
     });
 };
 
-//get a single user by id, using route /users/:userId
+// get a single user by id, using route /users/:userId
 const getUser = (req, res, next) => {
   const { userId } = req.params;
 
@@ -35,7 +35,7 @@ const getUser = (req, res, next) => {
     });
 };
 
-//add a new user using route /users
+// add a new user using route /users
 const createUser = (req, res, next) => {
   const { name, avatar } = req.body;
 
