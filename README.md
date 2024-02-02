@@ -4,7 +4,7 @@ Project name: SE_PROJECT_EXPRESS
 
 ## Project Description
 
-The Express project is a backend server intended to support the WTWR Front-end React project. It currently supports routes for the /users and /items endpoints, which correspond to 2 databases: one database stores the users, and another database stores clothing items.
+The Express project is a backend server intended to support the [WTWR Front-end React project](https://github.com/fdlai/se_project_react). It currently supports routes for the /users and /items endpoints, which correspond to 2 databases: one database stores the users, and another database stores clothing items.
 
 ## Project features
 
@@ -23,8 +23,6 @@ Plans to add:
 - More databases
 - Link the server to the front-end project: se_project_react
 - Authorization and security features
-
-- [Link to the front-end project: se_project_react](https://github.com/fdlai/se_project_react)
 
 ### Testing
 
