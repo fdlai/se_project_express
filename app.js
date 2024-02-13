@@ -4,6 +4,7 @@ const usersRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { CustomError } = require("./utils/errors");
 const { createUser, login } = require("./controllers/users");
+const { authorizeRequest } = require("./middlewares/auth");
 
 const { PORT = 3001 } = process.env;
 
@@ -31,7 +32,7 @@ app.post("/signup", createUser);
 app.post("/signin", login);
 
 app.use("/users", usersRouter);
-app.use("/items", setJohnMcClaneAsUser, clothingItemsRouter);
+app.use("/items", setJohnMcClaneAsUser, authorizeRequest, clothingItemsRouter);
 
 // runs if no other endpoints are requested
 app.use((req, res, next) => {

@@ -20,6 +20,10 @@ const handleErrors = (err, message, next) => {
     const error = new CustomError(err.message, 400);
     return next(error);
   }
+  if (err.name === "JsonWebTokenError") {
+    const error = new CustomError(err.message, 401);
+    return next(error);
+  }
   const error = new CustomError(message, err.statusCode);
   return next(error);
 };
