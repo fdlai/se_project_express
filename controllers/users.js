@@ -35,7 +35,52 @@ const getUser = (req, res, next) => {
     });
 };
 
-// add a new user using route /users
+// runs on route /users/me
+const getCurrentUser = (req, res, next) => {
+  const { _id } = req.user;
+
+  userModel
+    .findById(_id)
+    .orFail()
+    .then((user) => {
+      console.log(user);
+      return res.status(200).json(user);
+    })
+    .catch((err) => {
+      const message = `${err} Could not get user info.`;
+      handleErrors(err, message, next);
+    });
+};
+
+// change name and/or avatar using route /users/me
+const updateCurrentUser = (req, res, next) => {
+  const { _id } = req.user;
+  const { name, avatar } = req.body;
+  const updates = {};
+  if (name) {
+    updates.name = name;
+  }
+  if (avatar) {
+    updates.avatar = avatar;
+  }
+
+  userModel
+    .findByIdAndUpdate(_id, updates, {
+      new: true,
+      runValidators: true,
+    })
+    .orFail()
+    .then((user) => {
+      console.log(user);
+      return res.status(200).json(user);
+    })
+    .catch((err) => {
+      const message = `${err} Failed to update user info.`;
+      handleErrors(err, message, next);
+    });
+};
+
+// add a new user using route /signup
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
@@ -53,6 +98,7 @@ const createUser = (req, res, next) => {
     });
 };
 
+// send jwt token using route /signin
 const login = (req, res, next) => {
   const { email, password } = req.body;
   let user;
@@ -64,7 +110,7 @@ const login = (req, res, next) => {
     handleErrors(err, message, next);
   }
 
-  return userModel
+  userModel
     .findOne({ email })
     .select("+password")
     .orFail(() => {
@@ -94,4 +140,11 @@ const login = (req, res, next) => {
     });
 };
 
-module.exports = { getUsers, getUser, createUser, login };
+module.exports = {
+  getUsers,
+  getUser,
+  createUser,
+  login,
+  getCurrentUser,
+  updateCurrentUser,
+};

@@ -9,7 +9,7 @@ class CustomError extends Error {
 const handleErrors = (err, message, next) => {
   console.error(message);
   if (err.code === 11000) {
-    const error = new CustomError("Email address already in use.", 400);
+    const error = new CustomError("Email address already in use.", 409);
     return next(error);
   }
   if (err.name === "DocumentNotFoundError") {

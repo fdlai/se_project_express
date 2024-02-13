@@ -1,10 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const usersRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { CustomError } = require("./utils/errors");
 const { createUser, login } = require("./controllers/users");
-const { authorizeRequest } = require("./middlewares/auth");
 
 const { PORT = 3001 } = process.env;
 
@@ -20,19 +20,14 @@ mongoose.connect(
   },
 );
 
-const setJohnMcClaneAsUser = (req, res, next) => {
-  // John McClane's user id
-  req.user = { _id: "65ba14a62e30213b796614f5" };
-  return next();
-};
-
+app.use(cors());
 app.use(express.json());
 
 app.post("/signup", createUser);
 app.post("/signin", login);
 
 app.use("/users", usersRouter);
-app.use("/items", setJohnMcClaneAsUser, authorizeRequest, clothingItemsRouter);
+app.use("/items", clothingItemsRouter);
 
 // runs if no other endpoints are requested
 app.use((req, res, next) => {

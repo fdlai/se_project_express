@@ -1,5 +1,5 @@
 const clothingItemModel = require("../models/clothingItem");
-const { handleErrors } = require("../utils/errors");
+const { handleErrors, CustomError } = require("../utils/errors");
 
 // get all items, using route /items
 const getItems = (req, res, next) => {
@@ -35,10 +35,18 @@ const addItem = (req, res, next) => {
 // delete an item by its id, using route /items/:itemId
 const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
+  const { _id } = req.user; // the id of the currently logged in user
 
   clothingItemModel
-    .findByIdAndRemove(itemId)
+    .findById(itemId)
     .orFail()
+    .then((item) => {
+      if (!item.owner.equals(_id)) {
+        const error = new CustomError("Access denied.", 403);
+        throw error;
+      }
+      return clothingItemModel.findByIdAndRemove(itemId);
+    })
     .then((item) => {
       console.log(item);
       return res.status(200).json(item);

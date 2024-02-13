@@ -14,6 +14,9 @@ The Express project is a backend server intended to support the [WTWR Front-end 
 - Modular design and routing
 - Custom error class
 - Error handling with appropriate http status codes and responses
+- Hashed passwords
+- JWT tokens
+- Request authorization
 
 ## Plan on improving the project
 
@@ -22,7 +25,7 @@ Plans to add:
 - More Routes
 - More databases
 - Link the server to the front-end project: se_project_react
-- Authorization and security features
+- Security features
 
 ### Testing
 

@@ -1,19 +1,14 @@
 // the users route
 const { Router } = require("express");
+const { getCurrentUser, updateCurrentUser } = require("../controllers/users");
+const { authorizeRequest } = require("../middlewares/auth");
 
 const router = Router();
 
-// All these routes are no longer appropriate:
+// get user info of the current logged in user
+router.get("/me", authorizeRequest, getCurrentUser);
 
-// const { getUsers, getUser, createUser } = require("../controllers/users");
-
-// // get all users
-// router.get("/", getUsers);
-
-// // get a single user by id
-// router.get("/:userId", getUser);
-
-// // add a new user
-// router.post("/", createUser);
+// update user info for the currently logged in user
+router.patch("/me", authorizeRequest, updateCurrentUser);
 
 module.exports = router;
