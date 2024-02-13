@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const usersRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { CustomError } = require("./utils/errors");
+const { createUser, login } = require("./controllers/users");
 
 const { PORT = 3001 } = process.env;
 
@@ -25,8 +26,13 @@ const setJohnMcClaneAsUser = (req, res, next) => {
 };
 
 app.use(express.json());
+
+app.post("/signup", createUser);
+app.post("/signin", login);
+
 app.use("/users", usersRouter);
 app.use("/items", setJohnMcClaneAsUser, clothingItemsRouter);
+
 // runs if no other endpoints are requested
 app.use((req, res, next) => {
   const err = new CustomError(`Requested resource not found.`, 404);
@@ -40,5 +46,5 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log("Server is running!");
+  console.log(`Server is running on PORT ${PORT}`);
 });

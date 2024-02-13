@@ -1,5 +1,8 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const userModel = require("../models/user");
-const { CustomError, handleErrors } = require("../utils/errors");
+const { handleErrors, CustomError } = require("../utils/errors");
+const { JWT_SECRET } = require("../utils/config");
 
 // get all users using route /users
 const getUsers = (req, res, next) => {
@@ -21,10 +24,7 @@ const getUser = (req, res, next) => {
 
   userModel
     .findById(userId)
-    .orFail(() => {
-      const error = new CustomError("User ID not found", 404);
-      return next(error);
-    })
+    .orFail()
     .then((user) => {
       console.log(user);
       return res.status(200).json(user);
@@ -37,13 +37,15 @@ const getUser = (req, res, next) => {
 
 // add a new user using route /users
 const createUser = (req, res, next) => {
-  const { name, avatar } = req.body;
+  const { name, avatar, email, password } = req.body;
 
-  userModel
-    .create({ name, avatar })
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => userModel.create({ name, avatar, email, password: hash }))
     .then((newUser) => {
       console.log(newUser);
-      return res.status(200).json(newUser);
+      // Do not send password in the response
+      return res.status(201).json({ name, avatar, email });
     })
     .catch((err) => {
       const message = `${err} Failed to create new user.`;
@@ -51,4 +53,45 @@ const createUser = (req, res, next) => {
     });
 };
 
-module.exports = { getUsers, getUser, createUser };
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  let user;
+
+  // Check that both email and password fields were in the request body
+  if (!email || !password) {
+    const err = new CustomError("Please include both email and password.", 400);
+    const message = `${err} Could not log in.`;
+    handleErrors(err, message, next);
+  }
+
+  return userModel
+    .findOne({ email })
+    .select("+password")
+    .orFail(() => {
+      // Check email
+      const error = new CustomError("Incorrect email or password.", 401);
+      throw error;
+    })
+    .then((data) => {
+      user = data;
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      // Check password
+      if (!matched) {
+        const error = new CustomError("Incorrect email or password.", 401);
+        throw error;
+      }
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      return res.status(200).json({ token });
+    })
+    .catch((err) => {
+      const message = `${err} Could not log in.`;
+      handleErrors(err, message, next);
+    });
+};
+
+module.exports = { getUsers, getUser, createUser, login };

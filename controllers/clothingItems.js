@@ -1,5 +1,5 @@
 const clothingItemModel = require("../models/clothingItem");
-const { CustomError, handleErrors } = require("../utils/errors");
+const { handleErrors } = require("../utils/errors");
 
 // get all items, using route /items
 const getItems = (req, res, next) => {
@@ -24,7 +24,7 @@ const addItem = (req, res, next) => {
     .create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
       console.log(item);
-      return res.status(200).json(item);
+      return res.status(201).json(item);
     })
     .catch((err) => {
       const message = `${err} Could not add item.`;
@@ -38,10 +38,7 @@ const deleteItem = (req, res, next) => {
 
   clothingItemModel
     .findByIdAndRemove(itemId)
-    .orFail(() => {
-      const error = new CustomError("Item ID not found", 404);
-      return next(error);
-    })
+    .orFail()
     .then((item) => {
       console.log(item);
       return res.status(200).json(item);
@@ -62,10 +59,7 @@ const likeItem = (req, res, next) => {
       { $addToSet: { likes: req.user._id } },
       { new: true },
     )
-    .orFail(() => {
-      const error = new CustomError("Item ID not found", 404);
-      return next(error);
-    })
+    .orFail()
     .then((item) => {
       console.log(item);
       return res.status(200).json(item);
@@ -86,10 +80,7 @@ const unlikeItem = (req, res, next) => {
       { $pull: { likes: req.user._id } },
       { new: true },
     )
-    .orFail(() => {
-      const error = new CustomError("Item ID not found", 404);
-      return next(error);
-    })
+    .orFail()
     .then((item) => {
       console.log(item);
       return res.status(200).json(item);
