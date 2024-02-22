@@ -47,7 +47,7 @@ const getCurrentUser = (req, res, next) => {
       return res.status(200).json(user);
     })
     .catch((err) => {
-      const message = `${err} Could not get user info.`;
+      const message = `${err} Could not retrieve user info.`;
       handleErrors(err, message, next);
     });
 };
@@ -84,13 +84,28 @@ const updateCurrentUser = (req, res, next) => {
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
+  // name and avatar are optional
+  const storedUserInfo = { email }; // stored to database
+  const sentUserInfo = { email }; // sent to client
+  if (name) {
+    storedUserInfo.name = name;
+    sentUserInfo.name = name;
+  }
+  if (avatar) {
+    storedUserInfo.avatar = avatar;
+    sentUserInfo.avatar = avatar;
+  }
+
   bcrypt
     .hash(password, 10)
-    .then((hash) => userModel.create({ name, avatar, email, password: hash }))
+    .then((hash) => {
+      storedUserInfo.password = hash;
+      return userModel.create(storedUserInfo);
+    })
     .then((newUser) => {
       console.log(newUser);
       // Do not send password in the response
-      return res.status(201).json({ name, avatar, email });
+      return res.status(201).json(sentUserInfo);
     })
     .catch((err) => {
       const message = `${err} Failed to create new user.`;
@@ -102,6 +117,8 @@ const createUser = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   let user;
+  let name;
+  let avatar;
 
   // Check that both email and password fields were in the request body
   if (!email || !password) {
@@ -120,6 +137,8 @@ const login = (req, res, next) => {
     })
     .then((data) => {
       user = data;
+      name = data.name;
+      avatar = data.avatar;
       return bcrypt.compare(password, user.password);
     })
     .then((matched) => {
@@ -132,7 +151,13 @@ const login = (req, res, next) => {
         expiresIn: "7d",
       });
 
-      return res.status(200).json({ token });
+      return res.status(200).json({
+        token,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       const message = `${err} Could not log in.`;
