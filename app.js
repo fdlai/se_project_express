@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const helmet = require("helmet");
+const limiter = require("./utils/rate-limit-config");
 const usersRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { CustomError } = require("./utils/errors");
@@ -20,7 +22,9 @@ mongoose.connect(
   },
 );
 
+app.use(limiter); // 200 requests per 15 minutes
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
 app.post("/signup", createUser);
