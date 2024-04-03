@@ -2,11 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
+const { errors } = require("celebrate");
 const limiter = require("./utils/rate-limit-config");
 const usersRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { CustomError } = require("./utils/errors");
 const { createUser, login } = require("./controllers/users");
+const { validateUserBody, validateLogin } = require("./middlewares/validation");
 
 const { PORT = 3001 } = process.env;
 
@@ -27,8 +29,8 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-app.post("/signup", createUser);
-app.post("/signin", login);
+app.post("/signup", validateUserBody, createUser);
+app.post("/signin", validateLogin, login);
 
 app.use("/users", usersRouter);
 app.use("/items", clothingItemsRouter);
@@ -38,6 +40,8 @@ app.use((req, res, next) => {
   const err = new CustomError(`Requested resource not found.`, 404);
   return next(err);
 });
+// celebrate error handler
+app.use(errors());
 // global error handler.
 app.use((error, req, res, next) => {
   const statusCode = error.statusCode || 500;
