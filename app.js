@@ -9,6 +9,7 @@ const clothingItemsRouter = require("./routes/clothingItems");
 const { CustomError } = require("./utils/errors");
 const { createUser, login } = require("./controllers/users");
 const { validateUserBody, validateLogin } = require("./middlewares/validation");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const { PORT = 3001 } = process.env;
 
@@ -29,6 +30,9 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
+// log requests and save them to a file with winston
+app.use(requestLogger);
+
 app.post("/signup", validateUserBody, createUser);
 app.post("/signin", validateLogin, login);
 
@@ -40,6 +44,8 @@ app.use((req, res, next) => {
   const err = new CustomError(`Requested resource not found.`, 404);
   return next(err);
 });
+// save error logs to a file
+app.use(errorLogger);
 // celebrate error handler
 app.use(errors());
 // global error handler.
