@@ -33,6 +33,13 @@ app.use(express.json());
 // log requests and save them to a file with winston
 app.use(requestLogger);
 
+// test server crash
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.post("/signup", validateUserBody, createUser);
 app.post("/signin", validateLogin, login);
 
