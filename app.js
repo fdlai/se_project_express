@@ -8,8 +8,12 @@ const usersRouter = require("./routes/users");
 const clothingItemsRouter = require("./routes/clothingItems");
 const { CustomError } = require("./utils/errors");
 const { createUser, login } = require("./controllers/users");
-const { validateUserBody, validateLogin } = require("./middlewares/validation");
+const {
+  validateCreateUserBody,
+  validateLogin,
+} = require("./middlewares/validation");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+require("dotenv").config();
 
 const { PORT = 3001 } = process.env;
 
@@ -40,7 +44,7 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
-app.post("/signup", validateUserBody, createUser);
+app.post("/signup", validateCreateUserBody, createUser);
 app.post("/signin", validateLogin, login);
 
 app.use("/users", usersRouter);

@@ -4,37 +4,6 @@ const userModel = require("../models/user");
 const { handleErrors, CustomError } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
-// get all users using route /users
-const getUsers = (req, res, next) => {
-  userModel
-    .find({})
-    .then((usersArray) => {
-      console.log(usersArray);
-      return res.status(200).json(usersArray);
-    })
-    .catch((err) => {
-      const message = `${err} Failed to retrieve users.`;
-      handleErrors(err, message, next);
-    });
-};
-
-// get a single user by id, using route /users/:userId
-const getUser = (req, res, next) => {
-  const { userId } = req.params;
-
-  userModel
-    .findById(userId)
-    .orFail()
-    .then((user) => {
-      console.log(user);
-      return res.status(200).json(user);
-    })
-    .catch((err) => {
-      const message = `${err} Could not get user.`;
-      handleErrors(err, message, next);
-    });
-};
-
 // runs on route /users/me
 const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
@@ -117,8 +86,6 @@ const createUser = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   let user;
-  let name;
-  let avatar;
 
   // Check that both email and password fields were in the request body
   if (!email || !password) {
@@ -137,8 +104,6 @@ const login = (req, res, next) => {
     })
     .then((data) => {
       user = data;
-      name = data.name;
-      avatar = data.avatar;
       return bcrypt.compare(password, user.password);
     })
     .then((matched) => {
@@ -166,8 +131,6 @@ const login = (req, res, next) => {
 };
 
 module.exports = {
-  getUsers,
-  getUser,
   createUser,
   login,
   getCurrentUser,

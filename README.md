@@ -24,9 +24,12 @@ Plans to add:
 
 - More Routes
 - More databases
-- Link the server to the front-end project: se_project_react
 - Security features
 
-### Testing
+## Frontend Link
 
-Reminder: Before committing code, I should make sure I edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint currently on. For ex. 12
+- https://fdlai.nodnor.com
+
+## Backend Link
+
+- https://api.fdlai.nodnor.com
