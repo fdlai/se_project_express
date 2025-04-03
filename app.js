@@ -15,19 +15,19 @@ const {
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 require("dotenv").config();
 
+// gets the PORT variable from the environment variables, if it exists. If not, the default is 3001
 const { PORT = 3001 } = process.env;
 
 const app = express();
 
-mongoose.connect(
-  "mongodb://127.0.0.1:27017/wtwr_db",
-  (res) => {
-    console.log("MongoDB connected", res);
-  },
-  (err) => {
-    console.log("MongoDB error", err);
-  },
-);
+mongoose
+  .connect("mongodb://127.0.0.1:27017/wtwr_db")
+  .then(() => {
+    console.log("MongoDB connected");
+  })
+  .catch((err) => {
+    console.log("MongoDB connection error:", err);
+  });
 
 app.use(limiter); // 200 requests per 15 minutes
 app.use(cors());
@@ -37,12 +37,12 @@ app.use(express.json());
 // log requests and save them to a file with winston
 app.use(requestLogger);
 
-// test server crash
-app.get("/crash-test", () => {
-  setTimeout(() => {
-    throw new Error("Server will crash now");
-  }, 0);
-});
+// // test server crash
+// app.get("/crash-test", () => {
+//   setTimeout(() => {
+//     throw new Error("Server will crash now");
+//   }, 0);
+// });
 
 app.post("/signup", validateCreateUserBody, createUser);
 app.post("/signin", validateLogin, login);
