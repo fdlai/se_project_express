@@ -15,13 +15,14 @@ const {
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 require("dotenv").config();
 
-// gets the PORT variable from the environment variables, if it exists. If not, the default is 3001
-const { PORT = 3001 } = process.env;
+// gets the PORT and DB_URL variables from the environment variables, if they exist. If not, the defaults are 3001 and "mongodb://127.0.0.1:27017/wtwr_db"
+const { PORT = 3001, DB_URL = "mongodb://127.0.0.1:27017/wtwr_db" } =
+  process.env;
 
 const app = express();
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/wtwr_db")
+  .connect(DB_URL)
   .then(() => {
     console.log("MongoDB connected");
   })

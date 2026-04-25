@@ -1,0 +1,21 @@
+services:
+  database:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: .
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env.docker.local
+    environment:
+      - DB_URL=mongodb://database:27017/wtwr_db
+    depends_on:
+      - database
+
+volumes:
+  mongo_data:
