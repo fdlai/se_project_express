@@ -1,8 +1,7 @@
 services:
   database:
     image: mongo:6
-    ports:
-      - "27017:27017"
+    restart: always
     volumes:
       - mongo_data:/data/db
 
@@ -16,6 +15,7 @@ services:
       - DB_URL=mongodb://database:27017/wtwr_db
     depends_on:
       - database
+    restart: always
 
 volumes:
   mongo_data:
