@@ -28,8 +28,8 @@ Plans to add:
 
 ## Frontend Link
 
-- https://fdlai.nodnor.com
+- https://wtwr.fredlai.dev
 
 ## Backend Link
 
-- https://api.fdlai.nodnor.com
+- https://api-wtwr.fredlai.dev
